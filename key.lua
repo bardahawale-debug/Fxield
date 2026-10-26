@@ -149,23 +149,21 @@ local function verify()
     task.wait(0.25)
     gui:Destroy()
 
-    -- In a Roblox Studio experience, main_script.lua should be a ModuleScript
-    -- named MainScript under ReplicatedStorage, returning a function.
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local module = ReplicatedStorage:FindFirstChild("MainScript")
-    if module and module:IsA("ModuleScript") then
-        local ok, result = pcall(require, module)
-        if ok then
-            if type(result) == "function" then
-                local ran, err = pcall(result)
-                if not ran then warn("Fxield main script error:", err) end
-            end
-        else
-            warn("Fxield could not load MainScript:", result)
+    -- Executor-only: fetch and run the Fxield main script after key verification.
+    local url = "https://raw.githubusercontent.com/bardahawale-debug/Fxield/refs/heads/main/main_script.lua"
+    local ok, err = pcall(function()
+        local source = game:HttpGet(url)
+        local chunk, compileError = loadstring(source)
+        if not chunk then
+            error("Fxield main script compile error: " .. tostring(compileError))
         end
-    else
-        warn("Fxield key accepted, but MainScript ModuleScript was not found in ReplicatedStorage.")
-        warn("For Studio use, convert main_script.lua into a ModuleScript named MainScript and have it return a function.")
+        chunk()
+    end)
+
+    if not ok then
+        warn("Fxield failed to load: " .. tostring(err))
+        message.Text = "Couldn't load Fxield. Check executor HTTP/loadstring support."
+        message.TextColor3 = bad
     end
 end
 
