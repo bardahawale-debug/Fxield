@@ -151,12 +151,20 @@ local function verify()
 
     -- Executor-only: fetch and run the Fxield main script after key verification.
     local url = "https://raw.githubusercontent.com/bardahawale-debug/Fxield/refs/heads/main/main_script.lua"
-    local ok, err = pcall(function()
-        local source = game:HttpGet(url)
-        local chunk, compileError = loadstring(source)
-        if not chunk then
-            error("Fxield main script compile error: " .. tostring(compileError))
-        end
+
+local ok, err = pcall(function()
+    local source = game:HttpGet(url)
+    local chunk = assert(loadstring(source))
+    local result = chunk()
+
+    if type(result) == "function" then
+        result()
+    end
+end)
+
+if not ok then
+    warn("Fxield failed to load: " .. tostring(err))
+    end
         chunk()
     end)
 
