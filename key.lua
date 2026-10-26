@@ -150,22 +150,26 @@ local function verify()
     gui:Destroy()
 
     -- Executor-only: fetch and run the Fxield main script after key verification.
-    local url = "https://raw.githubusercontent.com/bardahawale-debug/Fxield/refs/heads/main/main_script.lua"
+        local url = "https://raw.githubusercontent.com/bardahawale-debug/Fxield/refs/heads/main/main_script.lua"
 
-local ok, err = pcall(function()
-    local source = game:HttpGet(url)
-    local chunk = assert(loadstring(source))
-    local result = chunk()
+    local ok, err = pcall(function()
+        local source = game:HttpGet(url)
+        local chunk = assert(loadstring(source))
+        local result = chunk()
 
-    if type(result) == "function" then
-        result()
+        if type(result) == "function" then
+            result()
+        end
+    end)
+
+    if not ok then
+        warn("Fxield failed to load: " .. tostring(err))
+        message.Text = "Failed to load Fxield. Check Delta Console."
+        message.TextColor3 = bad
     end
-end)
+end
 
-if not ok then
-    warn("Fxield failed to load: " .. tostring(err))
-    end
-        submit.Activated:Connect(verify)
+submit.Activated:Connect(verify)
 
 keyBox.FocusLost:Connect(function(enterPressed)
     if enterPressed then
