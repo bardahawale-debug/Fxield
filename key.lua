@@ -165,17 +165,10 @@ end)
 if not ok then
     warn("Fxield failed to load: " .. tostring(err))
     end
-        chunk()
-    end)
+        submit.Activated:Connect(verify)
 
-    if not ok then
-        warn("Fxield failed to load: " .. tostring(err))
-        message.Text = "Couldn't load Fxield. Check executor HTTP/loadstring support."
-        message.TextColor3 = bad
-    end
-end
-
-submit.Activated:Connect(verify)
 keyBox.FocusLost:Connect(function(enterPressed)
-    if enterPressed then verify() end
+    if enterPressed then
+        verify()
+    end
 end)
